@@ -33,3 +33,34 @@ def get_todos(first_n:int = None):
         return all_todos[:first_n]
     else:
         return all_todos
+    
+@api.post("/todos")
+def create_todo(todo: dict):
+    new_todo_id = max([todo['todo_id'] for todo in all_todos]) + 1
+    new_todo = {
+        'todo_id': new_todo_id,
+        'todo_name': todo['todo_name'],
+        'todo_description': todo['todo_description']
+    }
+    all_todos.append(new_todo)
+    return new_todo
+
+@api.put("/todos/{todo_id}")
+def update_todo(todo_id: int,update_todo: dict):
+    for todo in all_todos:
+        if todo['todo_id'] == todo_id:
+            todo['todo_name'] = update_todo['todo_name']
+            todo['todo_description'] = update_todo['todo_description']
+            return todo
+    return {"message": "Todo not found"}
+
+@api.delete("/todos/{todo_id}")
+def delete_todo(todo_id: int):
+    for todo in all_todos:
+        if todo['todo_id'] == todo_id:
+            all_todos.remove(todo)
+            return {"message": "Todo deleted"}
+    return {"message": "Todo not found"}
+
+
+
